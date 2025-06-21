@@ -3,96 +3,86 @@ session_start();
 include("config.php");
 
 if(isset($_POST['username'])){
-	$back = $bdd->query("SELECT * FROM users WHERE email='".sanitize_vars($_POST['username'])."' AND password='".sanitize_vars($_POST['password'])."'");
-	if($back->rowCount() == 1){
-		$back = $bdd->query("SELECT * FROM users WHERE email='".sanitize_vars($_POST['username'])."' AND password='".sanitize_vars($_POST['password'])."' AND trash='1'");
-		if($back->rowCount() == 1){
-			$row = $back->fetch();
-			$_SESSION['easybm_id'] = $row['id'];
-			$_SESSION['easybm_fullname'] = $row['fullname'];
-			$_SESSION['easybm_picture'] = $row['picture'];
-			$_SESSION['easybm_phone'] = $row['phone'];
-			$_SESSION['easybm_email'] = $row['email'];
-			$_SESSION['easybm_password'] = $row['password'];
-			$_SESSION['easybm_roles'] = $row['roles'];
-			$_SESSION['easybm_companies'] = "0,".$row['companies']!=""?$row['companies']:0;
-			$_SESSION['easybm_type'] = $row['type'];
-			$_SESSION['easybm_superadmin'] = $row['superadmin'];
+    $back = $bdd->prepare("SELECT * FROM users WHERE email=?");
+    $back->execute([sanitize_vars($_POST['username'])]);
 
-			if(isset($_POST['rememberme'])){
-				setcookie('rememberme', 'yes', time() + (86400 * 2));
-				setcookie('id', $_SESSION['easybm_id'], time() + (86400 * 2));
-				setcookie('fullname', $_SESSION['easybm_fullname'], time() + (86400 * 2));
-				setcookie('picture', $_SESSION['easybm_picture'], time() + (86400 * 2));
-				setcookie('phone', $_SESSION['easybm_phone'], time() + (86400 * 2));
-				setcookie('email', $_SESSION['easybm_email'], time() + (86400 * 2));
-				setcookie('password', $_SESSION['easybm_password'], time() + (86400 * 2));
-				setcookie('roles', $_SESSION['easybm_roles'], time() + (86400 * 2));
-				setcookie('companies', $_SESSION['easybm_companies'], time() + (86400 * 2));
-				setcookie('type', $_SESSION['easybm_type'], time() + (86400 * 2));
-				setcookie('superadmin', $_SESSION['easybm_superadmin'], time() + (86400 * 2));
-			}
-			else{
-				setcookie('rememberme', 'yes', time() - 3600);
-				setcookie('id', $_SESSION['easybm_id'], time() - 3600);
-				setcookie('fullname', $_SESSION['easybm_fullname'], time() - 3600);
-				setcookie('picture', $_SESSION['easybm_picture'], time() - 3600);
-				setcookie('phone', $_SESSION['easybm_phone'], time() - 3600);
-				setcookie('email', $_SESSION['easybm_email'], time() - 3600);
-				setcookie('password', $_SESSION['easybm_password'], time() - 3600);
-				setcookie('roles', $_SESSION['easybm_roles'], time() - 3600);
-				setcookie('companies', $_SESSION['easybm_companies'], time() - 3600);
-				setcookie('type', $_SESSION['easybm_type'], time() - 3600);	
-				setcookie('superadmin', $_SESSION['easybm_superadmin'], time() - 3600);	
-			}
-						
-			if(preg_match("#Consulter Tableau de bord#",$_SESSION['easybm_roles'])){	
-				$page = "index.php";
-			}
-			elseif(preg_match("#Consulter Historique des paiements#",$_SESSION['easybm_roles'])){	
-				$page = "payments.php";
-			}
-			elseif(preg_match("#Consulter Factures,#",$_SESSION['easybm_roles'])){	
-				$page = "factures.php";
-			}
-			elseif(preg_match("#Consulter Devis#",$_SESSION['easybm_roles'])){	
-				$page = "devis.php";
-			}
-			elseif(preg_match("#Consulter Factures proforma#",$_SESSION['easybm_roles'])){	
-				$page = "facturesproforma.php";
-			}
-			elseif(preg_match("#Consulter Bons de livraison#",$_SESSION['easybm_roles'])){	
-				$page = "bl.php";
-			}
-			elseif(preg_match("#Consulter Bons de sortie#",$_SESSION['easybm_roles'])){	
-				$page = "bs.php";
-			}
-			elseif(preg_match("#Consulter Bons de retour#",$_SESSION['easybm_roles'])){	
-				$page = "br.php";
-			}
-			elseif(preg_match("#Consulter Factures avoir#",$_SESSION['easybm_roles'])){	
-				$page = "avoirs.php";
-			}
-			elseif(preg_match("#Consulter Clients#",$_SESSION['easybm_roles'])){	
-				$page = "clients.php";
-			}
-			elseif(preg_match("#Consulter Bons de commande#",$_SESSION['easybm_roles'])){	
-				$page = "bc.php";
-			}
-			elseif(preg_match("#Consulter Bons de récéption#",$_SESSION['easybm_roles'])){	
-				$page = "bre.php";
-			}
-			elseif(preg_match("#Consulter Fournisseurs#",$_SESSION['easybm_roles'])){	
-				$page = "suppliers.php";
-			}
-			elseif(preg_match("#Consulter Utilisateurs#",$_SESSION['easybm_roles'])){	
-				$page = "users.php";
-			}
-			else{
-				$page = "login.php";
-			}
-			header('location: '.$page);
-		}
+	if($back->rowCount() == 1){
+        $row = $back->fetch();
+        if (password_verify(sanitize_vars($_POST['password']), $row['password'])) {
+            if($row['trash'] == '1'){
+                $_SESSION['easybm_id'] = $row['id'];
+                $_SESSION['easybm_fullname'] = $row['fullname'];
+                $_SESSION['easybm_picture'] = $row['picture'];
+                $_SESSION['easybm_phone'] = $row['phone'];
+                $_SESSION['easybm_email'] = $row['email'];
+                $_SESSION['easybm_roles'] = $row['roles'];
+                $_SESSION['easybm_companies'] = "0,".$row['companies']!=""?$row['companies']:0;
+                $_SESSION['easybm_type'] = $row['type'];
+                $_SESSION['easybm_superadmin'] = $row['superadmin'];
+
+                if(isset($_POST['rememberme'])){
+                    setcookie('rememberme', 'yes', time() + (86400 * 2));
+                    setcookie('id', $_SESSION['easybm_id'], time() + (86400 * 2));
+                    setcookie('email', $_SESSION['easybm_email'], time() + (86400 * 2));
+                }
+                else{
+                    setcookie('rememberme', 'yes', time() - 3600);
+                    setcookie('id', $_SESSION['easybm_id'], time() - 3600);
+                    setcookie('email', $_SESSION['easybm_email'], time() - 3600);
+                }
+                            
+                if(preg_match("#Consulter Tableau de bord#",$_SESSION['easybm_roles'])){	
+                    $page = "index.php";
+                }
+                elseif(preg_match("#Consulter Historique des paiements#",$_SESSION['easybm_roles'])){	
+                    $page = "payments.php";
+                }
+                elseif(preg_match("#Consulter Factures,#",$_SESSION['easybm_roles'])){	
+                    $page = "factures.php";
+                }
+                elseif(preg_match("#Consulter Devis#",$_SESSION['easybm_roles'])){	
+                    $page = "devis.php";
+                }
+                elseif(preg_match("#Consulter Factures proforma#",$_SESSION['easybm_roles'])){	
+                    $page = "facturesproforma.php";
+                }
+                elseif(preg_match("#Consulter Bons de livraison#",$_SESSION['easybm_roles'])){	
+                    $page = "bl.php";
+                }
+                elseif(preg_match("#Consulter Bons de sortie#",$_SESSION['easybm_roles'])){	
+                    $page = "bs.php";
+                }
+                elseif(preg_match("#Consulter Bons de retour#",$_SESSION['easybm_roles'])){	
+                    $page = "br.php";
+                }
+                elseif(preg_match("#Consulter Factures avoir#",$_SESSION['easybm_roles'])){	
+                    $page = "avoirs.php";
+                }
+                elseif(preg_match("#Consulter Clients#",$_SESSION['easybm_roles'])){	
+                    $page = "clients.php";
+                }
+                elseif(preg_match("#Consulter Bons de commande#",$_SESSION['easybm_roles'])){	
+                    $page = "bc.php";
+                }
+                elseif(preg_match("#Consulter Bons de récéption#",$_SESSION['easybm_roles'])){	
+                    $page = "bre.php";
+                }
+                elseif(preg_match("#Consulter Fournisseurs#",$_SESSION['easybm_roles'])){	
+                    $page = "suppliers.php";
+                }
+                elseif(preg_match("#Consulter Utilisateurs#",$_SESSION['easybm_roles'])){	
+                    $page = "users.php";
+                }
+                else{
+                    $page = "login.php";
+                }
+                header('location: '.$page);
+            } else {
+                $error = 'Votre compte est désactivé.';
+            }
+        } else {
+            $error = 'Login ou mot de passe est incorrect';
+        }
 	}
 	else{
 		$error = 'Login ou mot de passe est incorrect';
@@ -157,7 +147,7 @@ if(file_exists("installer.php")){
 									<label><input type="text" autocomplete="off" name="username" value="<?php echo isset($_COOKIE['email'])?$_COOKIE['email']:"";?>" placeholder="Login" /></label>
 								</div>
 								<div class="lx-textfield">
-									<label><input type="password" name="password" value="<?php echo isset($_COOKIE['password'])?$_COOKIE['password']:"";?>" placeholder="Mot de passe" /><i class="fa fa-eye-slash"></i></label>
+									<label><input type="password" name="password" value="" placeholder="Mot de passe" /><i class="fa fa-eye-slash"></i></label>
 								</div>
 								<div class="lx-textfield">
 									<label style="float:left;"><input type="checkbox" name="rememberme" value="yes" <?php echo isset($_COOKIE['rememberme'])?"checked":"";?> /> Se souvenir de moi<del class="checkmark"></del></label>

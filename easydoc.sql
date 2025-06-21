@@ -56,7 +56,10 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `company` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `dateadd` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `trash` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `code` (`code`),
+  KEY `fullname` (`fullname`),
+  KEY `phone` (`phone`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
@@ -90,7 +93,9 @@ CREATE TABLE IF NOT EXISTS `companies` (
   `bc` int(11) NOT NULL,
   `bre` int(11) NOT NULL,
   `trash` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `rs` (`rs`),
+  KEY `phone` (`phone`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
@@ -117,7 +122,8 @@ CREATE TABLE IF NOT EXISTS `detailsdocuments` (
   `typedoc` varchar(255) NOT NULL,
   `dateadd` varchar(255) NOT NULL,
   `trash` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `title` (`title`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
@@ -145,7 +151,11 @@ CREATE TABLE IF NOT EXISTS `documents` (
   `user` int(11) NOT NULL,
   `dateadd` varchar(255) NOT NULL,
   `trash` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `code` (`code`),
+  KEY `type` (`type`),
+  KEY `client` (`client`),
+  KEY `supplier` (`supplier`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
@@ -313,7 +323,9 @@ CREATE TABLE IF NOT EXISTS `suppliers` (
   `note` text COLLATE utf8_unicode_ci NOT NULL,
   `company` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `trash` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `title` (`title`),
+  KEY `respphone` (`respphone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -361,7 +373,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `projects` text COLLATE utf8_unicode_ci NOT NULL,
   `datesignup` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `trash` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `email` (`email`),
+  KEY `phone` (`phone`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=5 ;
 
 --
@@ -369,7 +383,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `fullname`, `picture`, `email`, `password`, `phone`, `type`, `roles`, `superadmin`, `defaultstate`, `depots`, `companies`, `projects`, `datesignup`, `trash`) VALUES
-(4, 'SuperAdmin', 'avatar.png', 'superadmin', 'superadmin', '0709999589', 'moderator', 'Consulter Tableau de bord,Consulter Trésorerie,Ajouter Trésorerie,Modifier Trésorerie,Supprimer Trésorerie,Exporter Trésorerie,Consulter Factures,Ajouter Factures,Modifier Factures,Supprimer Factures,Exporter Factures,Consulter Devis,Ajouter Devis,Modifier Devis,Supprimer Devis,Exporter Devis,Consulter Factures proforma,Ajouter Factures proforma,Modifier Factures proforma,Supprimer Factures proforma,Exporter Factures proforma,Consulter Bons de livraison,Ajouter Bons de livraison,Modifier Bons de livraison,Supprimer Bons de livraison,Exporter Bons de livraison,Consulter Bons de sortie,Ajouter Bons de sortie,Modifier Bons de sortie,Supprimer Bons de sortie,Exporter Bons de sortie,Consulter Bons de retour,Ajouter Bons de retour,Modifier Bons de retour,Supprimer Bons de retour,Exporter Bons de retour,Consulter Factures avoir,Ajouter Factures avoir,Modifier Factures avoir,Supprimer Factures avoir,Exporter Factures avoir,Consulter Clients,Ajouter Clients,Modifier Clients,Supprimer Clients,Exporter Clients,CA Clients,Consulter Bons de commande,Ajouter Bons de commande,Modifier Bons de commande,Supprimer Bons de commande,Exporter Bons de commande,Consulter Bons de réception,Ajouter Bons de réception,Modifier Bons de réception,Supprimer Bons de réception,Exporter Bons de réception,Consulter Fournisseurs,Ajouter Fournisseurs,Modifier Fournisseurs,Supprimer Fournisseurs,Exporter Fournisseurs,CA Fournisseurs,Consulter Sociétés,Ajouter Sociétés,Modifier Sociétés,Supprimer Sociétés,Exporter Sociétés,CA Sociétés,Consulter Utilisateurs,Ajouter Utilisateurs,Modifier Utilisateurs,Supprimer Utilisateurs,Consulter TVA,Ajouter TVA,Modifier TVA,Supprimer TVA,Consulter Formation,Consultation des notifications,Réglage des notifications,Modification date opération,Transformation / Dupplication documents,Modification statut de paiement,Suppression historique de paiement,Télécharger Backup', 1, 'Livrée', '0', '0,1', '0', '1678533547', 1);
+(4, 'SuperAdmin', 'avatar.png', 'superadmin', '$2y$10$IfaD6cRz.n2f.s8C.w8E1u.1L5.d/Q1n.k1H8.s5M.a8G/j.b.d.S', '0709999589', 'moderator', 'Consulter Tableau de bord,Consulter Trésorerie,Ajouter Trésorerie,Modifier Trésorerie,Supprimer Trésorerie,Exporter Trésorerie,Consulter Factures,Ajouter Factures,Modifier Factures,Supprimer Factures,Exporter Factures,Consulter Devis,Ajouter Devis,Modifier Devis,Supprimer Devis,Exporter Devis,Consulter Factures proforma,Ajouter Factures proforma,Modifier Factures proforma,Supprimer Factures proforma,Exporter Factures proforma,Consulter Bons de livraison,Ajouter Bons de livraison,Modifier Bons de livraison,Supprimer Bons de livraison,Exporter Bons de livraison,Consulter Bons de sortie,Ajouter Bons de sortie,Modifier Bons de sortie,Supprimer Bons de sortie,Exporter Bons de sortie,Consulter Bons de retour,Ajouter Bons de retour,Modifier Bons de retour,Supprimer Bons de retour,Exporter Bons de retour,Consulter Factures avoir,Ajouter Factures avoir,Modifier Factures avoir,Supprimer Factures avoir,Exporter Factures avoir,Consulter Clients,Ajouter Clients,Modifier Clients,Supprimer Clients,Exporter Clients,CA Clients,Consulter Bons de commande,Ajouter Bons de commande,Modifier Bons de commande,Supprimer Bons de commande,Exporter Bons de commande,Consulter Bons de réception,Ajouter Bons de réception,Modifier Bons de réception,Supprimer Bons de réception,Exporter Bons de réception,Consulter Fournisseurs,Ajouter Fournisseurs,Modifier Fournisseurs,Supprimer Fournisseurs,Exporter Fournisseurs,CA Fournisseurs,Consulter Sociétés,Ajouter Sociétés,Modifier Sociétés,Supprimer Sociétés,Exporter Sociétés,CA Sociétés,Consulter Utilisateurs,Ajouter Utilisateurs,Modifier Utilisateurs,Supprimer Utilisateurs,Consulter TVA,Ajouter TVA,Modifier TVA,Supprimer TVA,Consulter Formation,Consultation des notifications,Réglage des notifications,Modification date opération,Transformation / Dupplication documents,Modification statut de paiement,Suppression historique de paiement,Télécharger Backup', 1, 'Livrée', '0', '0,1', '0', '1678533547', 1);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
